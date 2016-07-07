@@ -32,7 +32,7 @@ class ContentFinderTests(unittest.TestCase):
 		self.assertTrue(any(Expected[3] in f for f in completeFiles))
 
 	def test_exclude_incomplete(self):
-		completeFiles = self.contentFinder.getCompleteContentFilePaths([os.path.join('test-filesystem', 'incomplete')], Extensions)
+		completeFiles = self.contentFinder.getCompleteContentFilePaths([os.path.join('test-filesystem', 'complete', 'incomplete')], Extensions)
 
 		self.assertEqual(len(completeFiles), 3)
 

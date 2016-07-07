@@ -36,12 +36,9 @@ def main(
 
 if __name__ == "__main__":
 	fileManagementImpl = "SymLinks"
-	homeDir = "/Users/rdelhommer"
-	handledContentFilePath = homeDir + "/media-manager/handled-content"
-	logFilePath = homeDir + "/media-manager/auto-media-manager.log"
-	completeDir = homeDir + "/media"
-	backupRoot = homeDir + "/backup"
-	excludeDirs = [completeDir + '/incomplete']
+	completeDir = '../tests/test-filesystem/complete'
+	backupRoot = '../tests/test-filesystem/backup'
+	excludeDirs = ['../tests/test-filesystem/complete/incomplete']
 	extensions = ['.mkv', '.mp4', '.ts']
 	maxLogEntries = 1000
 	ratioThreshold = 1.25
