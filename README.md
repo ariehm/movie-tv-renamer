@@ -4,6 +4,9 @@ This script uses imdb and tvdb to rename movie and tv show files into something 
 
 It is my first python project and I'm using it as a playground to see what the big deal is :)
 
+Disclaimer:
+It needs to be tested and probably doesn't work because I haven't tested it in a while
+
 ## TODO
 * remove seed after ratio is over threshold (1.25?)
 * add logging
