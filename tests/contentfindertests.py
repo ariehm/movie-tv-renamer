@@ -11,10 +11,10 @@ Extensions = ['.mkv', '.mp4', '.ts']
 CompleteDir = 'test-filesystem'
 
 Expected = [
-	'Game.Of.Thrones.S06E05.1080p.WEBRip.x264.AAC2.0-P2P.mp4',
-	'Game.of.Thrones.S06E01.The.Red.Woman.1080p.WEB-DL.DD5.1.H.264-NTb.mkv',
+	'Game.Of.Thrones.S06E05.random.descriptor.words.mp4',
+	'Game.of.Thrones.S06E01.The.Red.Woman.do.re.mi.fa.so.mkv',
 	'subfolder/The.Room.2003.blah.lol.mkv',
-	'incomplete/Game.Of.Thrones.S06E03.1080p.WEBRip.x264.AAC2.0-P2P.ts'
+	'incomplete/Game.Of.Thrones.S06E03.1080p.blah.blah.ts'
 ]
 
 class ContentFinderTests(unittest.TestCase):

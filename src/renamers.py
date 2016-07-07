@@ -14,12 +14,12 @@ class Renamer:
 
 class SymLinkRenamer(Renamer):
 	def __shouldRename(self, renamePath):
-		return !os.path.exists(renamePath)
+		return not os.path.exists(renamePath)
 
 	def renameFile(self, contentFile):
 		renamePath = os.path.splitext(self.getRenamePath())[0]
 
-		if !self.__shouldRename(renamePath):
+		if not self.__shouldRename(renamePath):
 			return
 
 		os.symlink(contentFile.fullName, renamePath)
@@ -29,12 +29,12 @@ class SymLinkRenamer(Renamer):
 
 class CopyRenamer(Renamer):
 	def __shouldRename(self, renamePath):
-		return !os.path.exists(renamePath)
+		return not os.path.exists(renamePath)
 
 	def renameFile(self, contentFile):
 		renamePath = self.getRenamePath()
 
-		if !self.__shouldRename(renamePath):
+		if not self.__shouldRename(renamePath):
 			return
 
 		shutil.copyfile(contentFile.fullName, renamePath)

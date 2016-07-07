@@ -1,4 +1,9 @@
 import unittest
+import os
+import sys
+
+src_path = os.path.abspath(os.path.join('..', 'src'))
+sys.path.append(src_path)
 
 from contentfindertests import ContentFinderTests
 from nameparsertests import TvNameParserTests
