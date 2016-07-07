@@ -9,13 +9,7 @@ import renamers
 import cleaneruppers
 import contentfinders
 
-# todo:
-# dont use handled-content file.  just check all files.  if the renamed symlink/file exists, then do nothing for that file
-# remove seed after ratio is over threshold (1.25?)
-# add logging
-
 def main(
-	fileManagementImpl, 
 	homeDir, 
 	handledContentFilePath, 
 	logFilePath, 
@@ -24,34 +18,19 @@ def main(
 	excludeDirs, 
 	extensions,
 	maxLogEntries,
-	ratioThreshold):
+	ratioThreshold,
+	renamer,
+	cleanerUpper):
 
 	contentFinder = contentfinders.ContentFinder(completeDir)
 	completeContentPaths = contentFinder.getCompleteContentFilePaths(
 		excludeDirs, extensions)
 
-	# get videos that are in complete directory but have not been handled yet
-	mediaFilesToHandle = [files.MediaFile(f) for f in completeContentPaths]
-
-	# exit if there is nothing new to handle
-	if len(mediaFilesToHandle) is 0:
-		print("none to handle")
-		sys.exit()
-
-	if FileManagementImpl == "SymLinks":
-		renamer = renamers.SymLinkRenamer(backupRoot)
-	else:
-		renamer = renamers.CopyRenamer(backupRoot)
+	completeMediaFiles = [files.MediaFile(f) for f in completeContentPaths]
 
 	# rename unhandled files
 	for file in mediaFilesToHandle:
-		if renamer.renameFile(file):
-			handledContentFile.addHandledFilePath(file.fullName)
-
-	if FileManagementImpl == "SymLinks":
-		renamer = cleaneruppers.SymLinkCleanerUpper(backupRoot)
-	else:
-		renamer = cleaneruppers.CopyCleanerUpper(backupRoot)
+		renamer.renameFile(file)
 
 	cleanerUpper(completeContentPaths, ratioThreshold).clean()
 
@@ -67,8 +46,17 @@ if __name__ == "__main__":
 	maxLogEntries = 1000
 	ratioThreshold = 1.25
 
-	main(
-		fileManagementImpl, 
+	renamer = None
+	cleanerUpper = None
+
+	if FileManagementImpl == "SymLinks":
+		renamer = renamers.SymLinkRenamer(backupRoot)
+		cleanerUpper = cleaneruppers.SymLinkCleanerUpper(backupRoot)
+	else:
+		renamer = renamers.CopyRenamer(backupRoot)
+		cleanerUpper = cleaneruppers.CopyCleanerUpper(backupRoot)
+
+	main( 
 		homeDir, 
 		handledContentFilePath, 
 		logFilePath, 
@@ -77,7 +65,9 @@ if __name__ == "__main__":
 		excludeDirs, 
 		extensions,
 		maxLogEntries,
-		ratioThreshold)
+		ratioThreshold,
+		renamer,
+		cleanerUpper)
 
 
 

@@ -13,17 +13,31 @@ class Renamer:
 		self.__renameRoot = renameRoot
 
 class SymLinkRenamer(Renamer):
+	def __shouldRename(self, renamePath):
+		return !os.path.exists(renamePath)
+
 	def renameFile(self, contentFile):
-		os.symlink(
-			contentFile.fullName, 
-			os.path.splitext(self.getRenamePath())[0])
+		renamePath = os.path.splitext(self.getRenamePath())[0]
+
+		if !self.__shouldRename(renamePath):
+			return
+
+		os.symlink(contentFile.fullName, renamePath)
 
 	def __init__(self, renameRoot):
 		Renamer.__init__(self, renameRoot)
 
 class CopyRenamer(Renamer):
+	def __shouldRename(self, renamePath):
+		return !os.path.exists(renamePath)
+
 	def renameFile(self, contentFile):
-		shutil.copyfile(contentFile.fullName, self.getRenamePath())
+		renamePath = self.getRenamePath()
+
+		if !self.__shouldRename(renamePath):
+			return
+
+		shutil.copyfile(contentFile.fullName, renamePath)
 
 	def __init__(self, renameRoot):
 		Renamer.__init__(self, renameRoot)
