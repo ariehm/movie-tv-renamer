@@ -7,33 +7,43 @@ sys.path.append(src_path)
 
 from mrclean import MrClean
 
-class ShouldExecuteCommand:
-    def shouldExecute(self, filePath):
+executed = False
+
+class TestException(Exception):
+    pass
+
+class AlwaysTrueTrigger:
+    def isTriggered(self, filePath):
         return True
 
-    def executeClean(self, filePath):
-        pass
-
-class ShouldNotExecuteCommand:
-    def shouldExecute(self, filePath):
+class AlwaysFalseTrigger:
+    def isTriggered(self, filePath):
         return False
 
+class Executor:
     def executeClean(self, filePath):
-        pass
+        print("a")
+        self.executed = True
 
-class FailureCommand:
-    def shouldExecute(self, filePath):
-        return True
-
-    def executeClean(self, filePath):
-        assert False, 'This command always fails'
+    def __init__(self):
+        self.executed = False
 
 class MrCleanTests(unittest.TestCase):
-    def setUp(self):
-        self.__executed = False
+    def test_no_trigger(self):
+        executor = Executor()
+        MrClean(executor).clean(['a'])
 
-    def test_all_should_clean(self):
-        cmds = (ShouldExecuteCommand(),ShouldExecuteCommand(),ShouldExecuteCommand())
+        self.assertTrue(executor.executed)
 
-    def test_execute_none_if_not_all_should_clean(self):
-        cmds = (ShouldExecuteCommand(),ShouldNotExecuteCommand(),FailureCommand())
+    def test_is_triggered(self):
+        executor = Executor()
+        MrClean(executor, AlwaysTrueTrigger()).clean(['a'])
+        
+        self.assertTrue(executor.executed)
+
+    def test_is_not_triggered(self):
+        executor = Executor()
+        MrClean(executor, AlwaysFalseTrigger()).clean(['a'])
+
+        self.assertFalse(executor.executed)
+
