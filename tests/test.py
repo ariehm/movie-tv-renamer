@@ -20,19 +20,19 @@ from configtests import ConfigTests
 from maintests import MainTests
 
 TestCases = (
-	ContentFinderTests,
-	TvNameParserTests,
-	MovieNameParserTests,
-	NameParserFactoryTests,
-	TvMediaTests,
-	MovieMediaTests,
-	MediaFileTests,
-	MediaFileFactoryTests,	
-	RenamerTests,
-	MrCleanTests,
-	MediaFactoryTests,
-	ConfigTests,
-	MainTests)
+    ContentFinderTests,
+    TvNameParserTests,
+    MovieNameParserTests,
+    NameParserFactoryTests,
+    TvMediaTests,
+    MovieMediaTests,
+    MediaFileTests,
+    MediaFileFactoryTests,    
+    RenamerTests,
+    MrCleanTests,
+    MediaFactoryTests,
+    ConfigTests,
+    MainTests)
 
 def load_tests(loader):
     suite = unittest.TestSuite()
@@ -42,5 +42,5 @@ def load_tests(loader):
     return suite
 
 if __name__ == '__main__':
-	suite = load_tests(unittest.TestLoader())
-	unittest.TextTestRunner(verbosity=2).run(suite)
+    suite = load_tests(unittest.TestLoader())
+    unittest.TextTestRunner(verbosity=2).run(suite)

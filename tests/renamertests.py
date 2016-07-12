@@ -17,11 +17,11 @@ ExpectedCosmeticPath = 'Movies/awesome.movie_2004.mkv'
 ExpectedRenamePath = os.path.join(RenameRoot, ExpectedCosmeticPath)
 
 class RenamerTests(unittest.TestCase):
-	def setUp(self):
-		self.renamer = Renamer(RenameRoot)
-		self.contentFile = MediaFile(FilePath, MovieMedia(ExpectedTitle, ExpectedYear))
+    def setUp(self):
+        self.renamer = Renamer(RenameRoot)
+        self.contentFile = MediaFile(FilePath, MovieMedia(ExpectedTitle, ExpectedYear))
 
-	def test_rename_path(self):
-		renamePath = self.renamer.getRenamePath(self.contentFile)
-		self.assertEqual(renamePath, ExpectedRenamePath)
+    def test_rename_path(self):
+        renamePath = self.renamer.getRenamePath(self.contentFile)
+        self.assertEqual(renamePath, ExpectedRenamePath)
 

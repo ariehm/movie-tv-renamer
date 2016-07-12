@@ -17,22 +17,22 @@ ExpectedDir = 'TV/awesome.tv/Season.6'
 ExpectedName = 'awesome.tv_[06x12]_best.episode.ever.mp4'
 
 class MockMedia:
-	def getCosmeticDir(self):
-		return ExpectedDir;
+    def getCosmeticDir(self):
+        return ExpectedDir;
 
-	def getCosmeticName(self):
-		return ExpectedName
+    def getCosmeticName(self):
+        return ExpectedName
 
 class MediaFileTests(unittest.TestCase):
-	def test_cosmetic_dir(self):
-		file = MediaFile(MovieFilePath, MockMedia())
-		
-		self.assertEqual(file.getCosmeticDir(), ExpectedDir)
+    def test_cosmetic_dir(self):
+        file = MediaFile(MovieFilePath, MockMedia())
+        
+        self.assertEqual(file.getCosmeticDir(), ExpectedDir)
 
-	def test_cosmetic_file_name(self):
-		file = MediaFile(MovieFilePath, MockMedia())
-		
-		self.assertEqual(file.getCosmeticFileName(), ExpectedName + ".mkv")
+    def test_cosmetic_file_name(self):
+        file = MediaFile(MovieFilePath, MockMedia())
+        
+        self.assertEqual(file.getCosmeticFileName(), ExpectedName + ".mkv")
 
 FilePath = 'file/path'
 MovieTitle = 'test title'
@@ -44,22 +44,22 @@ Season = 1111
 Episode = 2222
 
 class MockMovieMediaFactory:
-	def buildFromRawName(self, nameParserFactory, rawName ):
-		return MovieMedia(MovieTitle, Year)
+    def buildFromRawName(self, nameParserFactory, rawName ):
+        return MovieMedia(MovieTitle, Year)
 
 class MockTvMediaFactory:
-	def buildFromRawName(self, nameParserFactory, rawName ):
-		return TvMedia(TvShowTitle, TvEpTitle, Season, Episode)
+    def buildFromRawName(self, nameParserFactory, rawName ):
+        return TvMedia(TvShowTitle, TvEpTitle, Season, Episode)
 
 class MediaFileFactoryTests(unittest.TestCase):
-	def test_build_movie_from_raw_name(self):
-		file = MediaFileFactory().buildMediaFile(FilePath, None, MockMovieMediaFactory())
+    def test_build_movie_from_raw_name(self):
+        file = MediaFileFactory().buildMediaFile(FilePath, None, MockMovieMediaFactory())
 
-		self.assertEqual(file.fullName, FilePath)
-		self.assertTrue(isinstance(file.media, MovieMedia))
+        self.assertEqual(file.fullName, FilePath)
+        self.assertTrue(isinstance(file.media, MovieMedia))
 
-	def test_build_tv_from_raw_name(self):
-		file = MediaFileFactory().buildMediaFile(FilePath, None, MockTvMediaFactory())
+    def test_build_tv_from_raw_name(self):
+        file = MediaFileFactory().buildMediaFile(FilePath, None, MockTvMediaFactory())
 
-		self.assertEqual(file.fullName, FilePath)
-		self.assertTrue(isinstance(file.media, TvMedia))
+        self.assertEqual(file.fullName, FilePath)
+        self.assertTrue(isinstance(file.media, TvMedia))
