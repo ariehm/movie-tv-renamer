@@ -18,11 +18,8 @@ Expected = [
 ]
 
 class ContentFinderTests(unittest.TestCase):
-	def setUp(self):
-		self.contentFinder = ContentFinder(CompleteDir)
-
 	def test_no_exclude(self):
-		completeFiles = self.contentFinder.getCompleteContentFilePaths([], Extensions)
+		completeFiles = ContentFinder.getCompleteContentFilePaths(CompleteDir, [], Extensions)
 
 		self.assertEqual(len(completeFiles), 4)
 
@@ -32,7 +29,7 @@ class ContentFinderTests(unittest.TestCase):
 		self.assertTrue(any(Expected[3] in f for f in completeFiles))
 
 	def test_exclude_incomplete(self):
-		completeFiles = self.contentFinder.getCompleteContentFilePaths([os.path.join('test-filesystem', 'complete', 'incomplete')], Extensions)
+		completeFiles = ContentFinder.getCompleteContentFilePaths(CompleteDir, [os.path.join('test-filesystem', 'complete', 'incomplete')], Extensions)
 
 		self.assertEqual(len(completeFiles), 3)
 

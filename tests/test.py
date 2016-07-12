@@ -17,6 +17,7 @@ from mediafiletests import MediaFileFactoryTests
 from renamertests import RenamerTests
 from mrcleantests import MrCleanTests
 from configtests import ConfigTests
+from maintests import MainTests
 
 TestCases = (
 	ContentFinderTests,
@@ -30,7 +31,8 @@ TestCases = (
 	RenamerTests,
 	MrCleanTests,
 	MediaFactoryTests,
-	ConfigTests)
+	ConfigTests,
+	MainTests)
 
 def load_tests(loader):
     suite = unittest.TestSuite()

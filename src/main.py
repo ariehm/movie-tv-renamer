@@ -4,43 +4,24 @@ import getopt
 
 import files
 import renamers
-import cleaneruppers
-import contentfinders
+import mrclean
+from contentfinders import ContentFinder
 import config
-
-def main(
-	completeDir, 
-	backupRoot, 
-	excludeDirs, 
-	extensions,
-	ratioThreshold,
-	renamer,
-	cleanerUpper):
-
-	contentFinder = contentfinders.ContentFinder(completeDir)
-	completeContentPaths = contentFinder.getCompleteContentFilePaths(
-		excludeDirs, extensions)
-
-	completeMediaFiles = [files.MediaFile(f) for f in completeContentPaths]
-
-	# rename unhandled files
-	for file in mediaFilesToHandle:
-		renamer.renameFile(file)
-
-	cleanerUpper(completeContentPaths, ratioThreshold).clean()
+import jsonserializer
 
 def getOptions(argv):
+	print argv
 	configFilePath = ''
 
 	try:
-		opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+		opts, args = getopt.getopt(argv,"hc:",["cfile="])
 	except getopt.GetoptError:
-		print 'main.py -c <configfile>'
+		print 'CMD ARGS ERROR: main.py -c <configfile>'
 		sys.exit(2)
 
 	for opt, arg in opts:
-		if opt == '-h':
-			print 'main.py -c <configfile>'
+		if opt in ('-h', '--help'):
+			print 'HELP: main.py -c <configfile>'
 			sys.exit()
 		elif opt in ("-c", "--cfile"):
 			configFilePath = arg
@@ -49,33 +30,69 @@ def getOptions(argv):
 
 def getConfigs(configFilePath):
 	# return default config if none specified
-	if configFilePath == '':
-		return config.Config()
+	if not os.path.exists(configFilePath) or configFilePath == '':
+		return config.Config.getDefaultConfig()
 
-	return config.ConfigSerializer().deserializeConfig(configFilePath)
+	return config.Config.loadFromFile(jsonserializer.JsonSerializer(), configFilePath)
+
+def getDependencies(config):
+	renamer = None
+	mrcleans = []
+
+	if config.client == 'transmission':
+		transmissionMrClean = mrclean.MrClean(
+			mrclean.TransmissionCleanExecutor(),
+			mrclean.TransmissionCleanTrigger(config.ratioThreshold))
+
+		mrcleans.append(transmissionMrClean)
+
+	if config.fileManagement == 'symlinks':
+		renamer = renamers.SymLinkRenamer(config.backupRoot)
+		mrcleans.append(mrclean.MrClean(mrclean.SymLinkCleanExecutor(config.backupRoot)))
+	else:
+		renamer = renamers.CopyRenamer(config.backupRoot)
+		mrcleans.append(mrclean.MrClean(mrclean.CopyCleanExecutor()))
+
+	dependencies = {}
+	dependencies['renamer'] = renamer
+	dependencies['mrcleans'] = mrcleans
+
+	return dependencies
+
+
+def runManager(
+	completeDir,
+	excludeDirs, 
+	extensions,
+	ratioThreshold,
+	renamer,
+	mrCleans):
+
+	completeContentPaths = ContentFinder.getCompleteContentFilePaths(
+		completeDir, excludeDirs, extensions)
+
+	completeMediaFiles = [files.MediaFile(f) for f in completeContentPaths]
+
+	# rename unhandled files
+	for file in mediaFilesToHandle:
+		renamer.renameFile(file)
+
+	# clean up
+	for mrClean in mrCleans:
+		mrClean.clean(completeContentPaths)
 
 if __name__ == "__main__":
 	options = getOptions(sys.argv[1:])
+	print(options)
 	config = getConfigs(options['c'])
+	dependencies = getDependencies(config)
 
-	renamer = None
-	cleanerUpper = None
-
-	if config.fileManagement == "SymLinks":
-		renamer = renamers.SymLinkRenamer(config.backupRoot)
-		cleanerUpper = cleaneruppers.SymLinkCleanerUpper(config.backupRoot)
-	else:
-		renamer = renamers.CopyRenamer(config.backupRoot)
-		cleanerUpper = cleaneruppers.CopyCleanerUpper(config.backupRoot)
-
-	main( 
+	runManager( 
 		config.completeDir, 
-		config.backupRoot, 
 		config.excludeDirs, 
 		config.extensions,
-		config.ratioThreshold,
-		renamer,
-		cleanerUpper)
+		dependencies['renamer'],
+		dependencies['mrcleans'])
 
 
 

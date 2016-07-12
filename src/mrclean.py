@@ -2,27 +2,22 @@ import os
 import shutil
 import files
 
-class TranmissionCleanCommand:
-	def shouldExecute(self, filePathToClean):
-		raise NotImplementedError()
-
-	def executeClean(self, filePathToClean):
+class TransmissionCleanTrigger:
+	def isTriggered(self, filePathToClean):
 		raise NotImplementedError()
 
 	def __init__(self, ratioThreshold):
 		self.__ratioThreshold = ratioThreshold
 
-class CopyCleanCommand:
-	def shouldExecute(self, filePathToClean):
-		return True
+class TransmissionCleanExecutor:
+	def executeClean(self, filePathToClean):
+		raise NotImplementedError()
 
+class CopyCleanExecutor:
 	def executeClean(self, filePathToClean):
 		os.remove(filePathToClean)			
 
-class SymLinkCleanCommand:
-	def shouldExecute(self, filePathToClean):
-		return True
-
+class SymLinkCleanExecutor:
 	def executeClean(self, filePathToClean):
 		mediaFile = files.MediaFile(filePathToClean)
 		mediaFile.getMediaInfo()
@@ -40,9 +35,9 @@ class SymLinkCleanCommand:
 class MrClean:
 	def clean(self, filePathsToClean):
 		for filePath in filePathsToClean:
-			if all(b.shouldExecute(filePath) for b in self.__cmds):
-				for c in self.__cmds:
-					c.executeClean(filePath)
+			if self.__trigger == None or self.__trigger.isTriggered(filePath):
+				self.__executor.executeClean(filePath)
 
-	def __init__(self, cleanUpCommands):
-		self.__cmds = cleanUpCommands
+	def __init__(self, executor, trigger = None):
+		self.__executor = executor
+		self.__trigger = trigger

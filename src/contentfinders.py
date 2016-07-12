@@ -2,10 +2,11 @@ import os
 from files import File
 
 class ContentFinder:
-	def getCompleteContentFilePaths(self, excludeDirs, extensions):
+	@staticmethod
+	def getCompleteContentFilePaths(completeDir, excludeDirs, extensions):
 		completeFilePaths = []
 
-		for root, subdirs, files in os.walk(self.__completeDir):
+		for root, subdirs, files in os.walk(completeDir):
 			if any(d == root for d in excludeDirs):
 				continue
 			for file in files:
@@ -13,6 +14,3 @@ class ContentFinder:
 
 		# filter complete files for appropriate extensions
 		return [f for f in completeFilePaths if f.endswith(tuple(extensions))]
-
-	def __init__(self, completeDir):
-		self.__completeDir = completeDir
