@@ -9,7 +9,6 @@ It needs to be tested and probably doesn't work because I haven't tested it in a
 
 ## TODO
 * remove seed after ratio is over threshold (1.25?)
-* add config file and config file parser
 * add logging
 * add exception handling
 * add parameter checks

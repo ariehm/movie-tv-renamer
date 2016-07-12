@@ -16,18 +16,21 @@ from mediafiletests import MediaFileTests
 from mediafiletests import MediaFileFactoryTests
 from renamertests import RenamerTests
 from mrcleantests import MrCleanTests
+from configtests import ConfigTests
 
-TestCases = (ContentFinderTests,
+TestCases = (
+	ContentFinderTests,
 	TvNameParserTests,
 	MovieNameParserTests,
+	NameParserFactoryTests,
 	TvMediaTests,
 	MovieMediaTests,
 	MediaFileTests,
+	MediaFileFactoryTests,	
 	RenamerTests,
 	MrCleanTests,
-	MediaFileFactoryTests,
 	MediaFactoryTests,
-	NameParserFactoryTests)
+	ConfigTests)
 
 def load_tests(loader):
     suite = unittest.TestSuite()
