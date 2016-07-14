@@ -1,8 +1,8 @@
 {
     "file-management": "symlink",
-    "complete-dir": "complete",
-    "backup-root": "backup",
-    "exclude-dirs":[],
+    "complete-dir": "../tests/test-filesystem/complete",
+    "backup-root": "../tests/test-filesystem/backups",
+    "exclude-dirs":["../tests/test-filesystem/incomplete"],
     "extensions":[".mp4",".ts",".mkv"],
     "ratio-threshold": 345
 }

@@ -1,6 +1,7 @@
 import re
 import os
 import media
+import logging
 
 from media import TvMedia
 from media import MovieMedia
@@ -31,9 +32,16 @@ class MediaFile(File):
 
 class MediaFileFactory:
     def buildMediaFile(self, filePath, nameParserFactory, mediaFactory):
+        log = logging.getLogger('root')
+
         rawName = os.path.splitext(os.path.basename(filePath))[0]
         media = mediaFactory.buildFromRawName(nameParserFactory, rawName)
-        return MediaFile(filePath, media)
+
+        if media:
+            return MediaFile(filePath, media)
+
+        log.warn('Could not build a media file from {%s}', filePath)
+        return None
 
 class ReadWriteFile(File):
     def closeFile(self):

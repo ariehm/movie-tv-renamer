@@ -1,4 +1,5 @@
 import os
+import logging
 
 from nameparsers import TvNameParser
 from nameparsers import MovieNameParser
@@ -26,7 +27,6 @@ class MovieMedia(Media):
 
 class TvMedia(Media):
     def getCosmeticDir(self):
-        print(self._wordSeparator)
         return os.path.join("TV", 
             self._wordSeparator.join(self.__showTitleWords), 
             "Season" + self._wordSeparator + str(int(self.season)));
@@ -50,17 +50,34 @@ class TvMedia(Media):
 
 class MediaFactory:
     def buildFromRawName(self, nameParserFactory, rawName):
+        log = logging.getLogger('root')
+
         parser = nameParserFactory.buildFromRawName(rawName)
         info = parser.parseName(rawName)
 
-        if isinstance(parser, TvNameParser):
+        if info and isinstance(parser, TvNameParser):
+            log.info(
+                'From {%s}. Found TV {%s-%s: S%sE%s}', 
+                rawName,
+                info['showTitle'],
+                info['epTitle'],
+                info['season'],
+                info['episode'])
+
             return TvMedia(
                 info['showTitle'], 
                 info['epTitle'], 
                 info['season'], 
                 info['episode'])
-        elif isinstance(parser, MovieNameParser):
+        elif info and isinstance(parser, MovieNameParser):
+            log.info(
+                'From {%s}. Found Movie {%s-%s}', 
+                rawName,
+                info['title'],
+                info['year'])
+
             return MovieMedia(info['title'], info['year'])
 
-        raise NotImplementedError('Could not build a media type from the supplied name {' + rawName + '}')
-
+        log.warn('Could not build a media type from {' + rawName + '}')
+        return None
+        

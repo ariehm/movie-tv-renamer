@@ -1,6 +1,8 @@
 import os
 import sys
 import getopt
+import logging
+from logging.handlers import RotatingFileHandler
 
 import files
 import renamers
@@ -8,6 +10,8 @@ import mrclean
 from contentfinders import ContentFinder
 import config
 import jsonserializer
+import nameparsers
+import media
 
 def getOptions(argv):
     configFilePath = ''
@@ -35,24 +39,28 @@ def getConfigs(configFilePath):
     return config.Config.loadFromFile(jsonserializer.JsonSerializer(), configFilePath)
 
 def getDependencies(config):
+    log = logging.getLogger('root')
     renamer = None
     mrcleans = []
 
     if config.client == 'transmission':
+        log.info('Setting up Transmission MrClean')
         transmissionMrClean = mrclean.MrClean(
             mrclean.TransmissionCleanExecutor(),
             mrclean.TransmissionCleanTrigger(config.ratioThreshold))
 
         mrcleans.append(transmissionMrClean)
 
-    if config.fileManagement == 'symlinks':
+    if config.fileManagement == 'symlink':
+        log.info('Setting up SYMLINKS file management')
         renamer = renamers.SymLinkRenamer(config.backupRoot)
         symlinkMrClean = mrclean.MrClean(
             mrclean.SymLinkCleanExecutor(config.backupRoot),
             mrclean.TransmissionCleanTrigger(config.ratioThreshold))
-        
-        mrCleans.append(symlinkMrClean)
+
+        mrcleans.append(symlinkMrClean)
     else:
+        log.info('Setting up COPY file management')
         renamer = renamers.CopyRenamer(config.backupRoot)
         copyMrClean = mrclean.MrClean(
             mrclean.CopyCleanExecutor(),
@@ -74,37 +82,61 @@ def runManager(
     ratioThreshold,
     renamer,
     mrCleans):
+    log = logging.getLogger('root')
 
     completeContentPaths = ContentFinder.getCompleteContentFilePaths(
         completeDir, excludeDirs, extensions)
 
-    print(completeContentPaths)
+    mediaFileFactory = files.MediaFileFactory()
+    nameParserFactory = nameparsers.NameParserFactory()
+    mediaFactory = media.MediaFactory()
 
-    completeMediaFiles = [files.MediaFile(f) for f in completeContentPaths]
+    completeMediaFiles = []
+    for f in completeContentPaths:
+        mediaFile = mediaFileFactory.buildMediaFile(f, nameParserFactory, mediaFactory)
 
-    print(completeMediaFiles)
+        if mediaFile:
+            completeMediaFiles.append(mediaFile)
 
     # rename unhandled files
-    for file in mediaFilesToHandle:
-        print('renaming file: {' + file + '} with renamer: {' + '}')
+    for file in completeMediaFiles:
         renamer.renameFile(file)
 
     # clean up
     for mrClean in mrCleans:
-        print('renaming file: {' + file + '} with renamer: {' + '}')
         mrClean.clean(completeContentPaths)
 
 if __name__ == "__main__":
+    logFormatter = logging.Formatter('%(asctime)s %(levelname)s - %(message)s')
+
+    logFile = 'media-tv-renamer.log'
+
+    logHandler = RotatingFileHandler(logFile, mode='a', maxBytes=5*1024*1024, backupCount=2, encoding=None, delay=0)
+    logHandler.setFormatter(logFormatter)
+    logHandler.setLevel(logging.INFO)
+
+    log = logging.getLogger('root')
+    log.setLevel(logging.INFO)
+
+    log.addHandler(logHandler)
+
+    log.info('Renamer Started')
+
     options = getOptions(sys.argv[1:])
+
     config = getConfigs(options['c'])
+
     dependencies = getDependencies(config)
 
     runManager( 
         config.completeDir, 
         config.excludeDirs, 
         config.extensions,
+        config.ratioThreshold,
         dependencies['renamer'],
         dependencies['mrcleans'])
+
+    log.info('Renamer Finished')
 
 
 

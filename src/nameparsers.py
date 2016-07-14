@@ -1,10 +1,13 @@
 import re
+import logging
 
 from tvdbwrapper import TvdbWrapper
 from imdbwrapper import ImdbWrapper
 
 class TvNameParser:
     def parseName(self, rawName):
+        log = logging.getLogger('root')
+
         # generally: {show title}{SxxExx}{year}{episode title}{descriptors}
         # We only care about the show title and season and episode numbers
         # Everything after SxxExx is ignored
@@ -30,11 +33,10 @@ class TvNameParser:
 
             if season != "" and episode != "":
                 ret = self.__tvdb.getEpisodeInfo(' '.join(showTitle), int(season), int(episode))
-
                 if ret:
                     return ret
             
-
+        log.warn('Could not parse name from {%s}', rawName)
         return None
 
     def __init__(self, tvdb):
@@ -74,6 +76,8 @@ class MovieNameParser:
 
 class NameParserFactory:
     def buildFromRawName(self, rawName):
+        log = logging.getLogger('root')
+
         # show is tv if we can find SxxExx
         if re.match(".+S?\\d\\d[Ex]\\d\\d.?", rawName):
             return TvNameParser(TvdbWrapper())
