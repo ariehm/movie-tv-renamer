@@ -10,7 +10,6 @@ import config
 import jsonserializer
 
 def getOptions(argv):
-    print argv
     configFilePath = ''
 
     try:
@@ -48,10 +47,18 @@ def getDependencies(config):
 
     if config.fileManagement == 'symlinks':
         renamer = renamers.SymLinkRenamer(config.backupRoot)
-        mrcleans.append(mrclean.MrClean(mrclean.SymLinkCleanExecutor(config.backupRoot)))
+        symlinkMrClean = mrclean.MrClean(
+            mrclean.SymLinkCleanExecutor(config.backupRoot),
+            mrclean.TransmissionCleanTrigger(config.ratioThreshold))
+        
+        mrCleans.append(symlinkMrClean)
     else:
         renamer = renamers.CopyRenamer(config.backupRoot)
-        mrcleans.append(mrclean.MrClean(mrclean.CopyCleanExecutor()))
+        copyMrClean = mrclean.MrClean(
+            mrclean.CopyCleanExecutor(),
+            mrclean.TransmissionCleanTrigger(config.ratioThreshold))
+
+        mrcleans.append(copyMrClean)
 
     dependencies = {}
     dependencies['renamer'] = renamer
@@ -71,19 +78,24 @@ def runManager(
     completeContentPaths = ContentFinder.getCompleteContentFilePaths(
         completeDir, excludeDirs, extensions)
 
+    print(completeContentPaths)
+
     completeMediaFiles = [files.MediaFile(f) for f in completeContentPaths]
+
+    print(completeMediaFiles)
 
     # rename unhandled files
     for file in mediaFilesToHandle:
+        print('renaming file: {' + file + '} with renamer: {' + '}')
         renamer.renameFile(file)
 
     # clean up
     for mrClean in mrCleans:
+        print('renaming file: {' + file + '} with renamer: {' + '}')
         mrClean.clean(completeContentPaths)
 
 if __name__ == "__main__":
     options = getOptions(sys.argv[1:])
-    print(options)
     config = getConfigs(options['c'])
     dependencies = getDependencies(config)
 

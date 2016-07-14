@@ -4,6 +4,7 @@ import files
 
 class TransmissionCleanTrigger:
     def isTriggered(self, filePathToClean):
+        # triggered if seed ratio above threshold or file is torrent is not active
         raise NotImplementedError()
 
     def __init__(self, ratioThreshold):

@@ -8,6 +8,7 @@ Disclaimer:
 It needs to be tested and probably doesn't work because I haven't tested it in a while
 
 ## TODO
+* integration testing
 * remove seed after ratio is over threshold (1.25?)
 * add logging
 * add exception handling
