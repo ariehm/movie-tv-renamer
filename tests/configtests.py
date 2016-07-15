@@ -13,7 +13,7 @@ class MockSerializer:
 
     def deserializeFromFile(self, filePath):
         ret = {}
-        
+
         ret[Config.FILE_MANAGEMENT_KEY] = 'a'
         ret[Config.COMPLETE_DIR_KEY] = 'b'
         ret[Config.EXCLUDE_DIRS_KEY] = ['exclude1', 'exclude2']
