@@ -1,1 +1,0 @@
-{"file-management": "copy","complete-dir": "../tests/test-filesystem/complete","backup-root": "../tests/test-filesystem/backups","exclude-dirs":["../tests/test-filesystem/complete/incomplete"],"extensions":[".mp4",".ts",".mkv"],"ratio-threshold": 345}
