@@ -77,7 +77,7 @@ def getDependencies(config):
 
 def runManager(
     completeDir,
-    excludeDirs, 
+    excludeDirs,
     extensions,
     ratioThreshold,
     renamer,
@@ -106,7 +106,7 @@ def runManager(
     for mrClean in mrCleans:
         mrClean.clean(completeContentPaths)
 
-if __name__ == "__main__":
+def main():
     logFormatter = logging.Formatter('%(asctime)s %(levelname)s - %(message)s')
 
     logFile = 'media-tv-renamer.log'
@@ -128,9 +128,9 @@ if __name__ == "__main__":
 
     dependencies = getDependencies(config)
 
-    runManager( 
-        config.completeDir, 
-        config.excludeDirs, 
+    runManager(
+        config.completeDir,
+        config.excludeDirs,
         config.extensions,
         config.ratioThreshold,
         dependencies['renamer'],
@@ -138,6 +138,5 @@ if __name__ == "__main__":
 
     log.info('Renamer Finished')
 
-
-
-
+if __name__ == "__main__":
+    main()

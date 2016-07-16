@@ -35,7 +35,7 @@ class TvNameParser:
                 ret = self.__tvdb.getEpisodeInfo(' '.join(showTitle), int(season), int(episode))
                 if ret:
                     return ret
-            
+
         log.warn('Could not parse name from {%s}', rawName)
         return None
 
@@ -58,7 +58,7 @@ class MovieNameParser:
             for x in rawName.split(s):
                 if re.match("^[19]|[20]\\d\\d\\d$", x):
                     potentialYearIndexes.append({'index': index, 'year': x})
-                
+
                 index = index + 1
                 title.append(x)
 
@@ -67,7 +67,7 @@ class MovieNameParser:
                 year = y['year']
                 ret = self.__imdb.getMovieInfo(' '.join(toSearch), year)
                 if ret:
-                    return ret    
+                    return ret
 
         return None
 

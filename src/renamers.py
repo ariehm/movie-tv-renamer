@@ -6,8 +6,8 @@ import logging
 class Renamer:
     def getRenamePath(self, contentFile):
         return os.path.join(
-            self.renameRoot, 
-            contentFile.getCosmeticDir(), 
+            self.renameRoot,
+            contentFile.getCosmeticDir(),
             contentFile.getCosmeticFileName())
 
     def __init__(self, renameRoot):
@@ -15,7 +15,7 @@ class Renamer:
 
 class SymLinkRenamer(Renamer):
     def __shouldRename(self, renamePath):
-        return not os.path.exists(renamePath)
+        return not os.path.islink(renamePath)
 
     def renameFile(self, contentFile):
         log = logging.getLogger('root')
@@ -31,6 +31,8 @@ class SymLinkRenamer(Renamer):
             return
 
         log.info('Creating SymLink at {%s} to {%s}', renamePath, contentFile.fullName)
+        print(contentFile.fullName)
+        print(os.path.exists(contentFile.fullName))
         os.symlink(contentFile.fullName, renamePath)
 
     def __init__(self, renameRoot):

@@ -2,9 +2,6 @@ import unittest
 import os
 import sys
 
-src_path = os.path.abspath(os.path.join('..', 'src'))
-sys.path.append(src_path)
-
 from contentfindertests import ContentFinderTests
 from nameparsertests import TvNameParserTests
 from nameparsertests import MovieNameParserTests
@@ -27,7 +24,7 @@ TestCases = (
     TvMediaTests,
     MovieMediaTests,
     MediaFileTests,
-    MediaFileFactoryTests,    
+    MediaFileFactoryTests,
     RenamerTests,
     MrCleanTests,
     MediaFactoryTests,

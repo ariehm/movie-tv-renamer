@@ -17,8 +17,6 @@ class ImdbWrapper:
 
         query = self.__getQuery(title,year)
 
-        log.info('Send query to IMDB {%s}', query)
-
         res = requests.get(self.__apiUrl + query).json()
 
         try:
@@ -26,6 +24,8 @@ class ImdbWrapper:
             movie = res['Search'][0]
         except:
             return None
+
+        log.info('Found title {%s} and year {%s}', movie['Title'], movie['Year'])
 
         return {
             'title': movie['Title'],
