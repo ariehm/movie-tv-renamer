@@ -8,9 +8,6 @@ Disclaimer:
 It needs to be tested and probably doesn't work because I haven't tested it in a while
 
 ## TODO
-* finish integration testing
-** SymLinkRenamer.shouldRename() is not working correctly when the symlink already exists
-* add test-filesystem to gitignore and create integration testing script that creates and destroys the test-filesystem
 * remove seed after ratio is over threshold (1.25?)
 * add logging
 * add exception handling
